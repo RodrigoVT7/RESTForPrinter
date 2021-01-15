@@ -15,6 +15,10 @@ const jobToPrintSchema = new Schema({
         ref: 'Identifier',
         required: [true, 'El identifier es obligatorio']  
     },
+    documentName:{ 
+        type: String,
+        required: [true, 'El nombre del documento es obligatorio'] 
+    },
 });
 
 

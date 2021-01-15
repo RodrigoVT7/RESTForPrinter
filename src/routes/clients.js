@@ -58,7 +58,7 @@ router.post('/newclient', async (req, res) => {
             })
         }        
         
-        res.json({
+        res.status(201).json({
             ok: true,
             client: clientDB
         });
@@ -68,13 +68,14 @@ router.post('/newclient', async (req, res) => {
 });
 
 // Actualizar info de cliente
-router.put('/client/:id', (req, res) => {
+router.put('/client/:id', async (req, res) => {
     let id = req.params.id
     let { mac, warehouse, terminal} = req.body;
 
 
     if(mac.length > 0 && warehouse.length > 0 && terminal.length > 0){
-        Identifier.findByIdAndUpdate(id, {mac, warehouse, terminal}, { new: true, runValidators: true, context: 'query' }, (err, clientDB) => {
+        
+        await Identifier.findByIdAndUpdate(id, {mac, warehouse, terminal}, { new: true, runValidators: true, context: 'query' }, (err, clientDB) => {
         
             if ( err ) {
                 return res.status(500).json({
@@ -92,7 +93,7 @@ router.put('/client/:id', (req, res) => {
                 });
             }
             
-            res.json({
+            res.status(200).json({
                 ok: true,
                 client: clientDB
             });
@@ -102,10 +103,10 @@ router.put('/client/:id', (req, res) => {
 });
 
 //Eliminar cliente
-router.delete('/deleteclient/:id', (req, res) => {
+router.delete('/deleteclient/:id', async (req, res) => {
     let id = req.params.id;
 
-    Identifier.findByIdAndDelete(id, (err, clientDelete) =>{
+    await Identifier.findByIdAndDelete(id, (err, clientDelete) =>{
 
         if( err ){
             return res.status(500).json({
@@ -123,9 +124,9 @@ router.delete('/deleteclient/:id', (req, res) => {
 })
 
 // Obtener todos los clientes
-router.get('/clients', (req, res) => {
+router.get('/clients', async (req, res) => {
 
-    Identifier.find({}, 'warehouse terminal')
+    await Identifier.find({}, 'warehouse terminal')
         .exec(
             (err, clientsDB) => {
 

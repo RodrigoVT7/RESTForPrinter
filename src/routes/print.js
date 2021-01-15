@@ -7,23 +7,25 @@ const JobToPrint = require('../../models/JobToPrint');
 //Enviar trabajo de impresion a cliente seleccionado
 router.post('/printraw', async (req, res) => {
 
-    let {content, printerName, identifier} = req.body;
+    let {content, documentName, printerName, identifier} = req.body;
 
     if (content === null || content === "" || 
         printerName === null || printerName === "" || 
-        identifier === null || identifier === "") {
+        identifier === null || identifier === "" ||
+        documentName === null || documentName === "" ) {
       
       return res.status(400).json({
         ok: false,
-        message: 'content, printerName o identifier sin datos'
+        message: 'content, printerName, identifier o documentName sin datos'
       });
 
     } else {
 
       const newJobToPrint = new JobToPrint({
         content, 
+        documentName,
         printerName, 
-        identifier   
+        identifier
       });
 
       await newJobToPrint.save( async(err, jobToPrintDB) => {
@@ -56,7 +58,8 @@ router.get('/printraw/:identifier', async (req, res) => {
 
   console.log("Consulta");
 
-  JobToPrint.find({identifier}, '_id content printerName')
+  await JobToPrint.find({identifier}, '_id content documentName printerName')
+    .sort({"timestamp":-1})
     .exec(
         (err, jobsToPrint) => {
 
